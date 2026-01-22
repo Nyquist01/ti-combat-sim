@@ -53,7 +53,7 @@ class Fighter(Ship):
     def __init__(self):
         self.hp = 1
         self.combat = 9
-        self.priority = 2
+        self.priority = 3
         self.name = "fighter"
 
 
@@ -61,8 +61,16 @@ class Carrier(Ship):
     def __init__(self):
         self.hp = 1
         self.combat = 9
-        self.priority = 3
+        self.priority = 4
         self.name = "carrier"
+
+
+class Destroyer(Ship):
+    def __init__(self):
+        self.hp = 1
+        self.combat = 1
+        self.priority = 2
+        self.name = "destroyer"
 
 
 def roll_d10() -> int:
@@ -102,7 +110,8 @@ def build_fleets(fleet_num: int | str) -> list[Ship]:
     n_fighters = int(input("Fighters: "))
     n_carriers = int(input("Carriers: "))
     n_dreadnaughts = int(input("Dreadnaughts: "))
-    return [Fighter() for _ in range(n_fighters)] + [Carrier() for _ in range(n_carriers)] + [Dreadnaught() for _ in range(n_dreadnaughts)]
+    n_destroyers = int(input("Destroyers: "))
+    return [Fighter() for _ in range(n_fighters)] + [Carrier() for _ in range(n_carriers)] + [Dreadnaught() for _ in range(n_dreadnaughts)] + [Destroyer() for _ in range(n_destroyers)]
 
 
 def build_table(fleet_1_wins: int, fleet_2_wins: int, draws: int, simulations: int) -> None:
@@ -115,6 +124,23 @@ def build_table(fleet_1_wins: int, fleet_2_wins: int, draws: int, simulations: i
     print("\n")
     print(tabulate(data, headers=headers, tablefmt="grid"))
 
+
+def antifighter_barrage(fleet: list[Ship], enemy_fleet: list[Ship]) -> int:
+    barrage_count = 0
+    for ship in fleet:
+        if isinstance(ship, Destroyer):
+            barrage_count += 1
+    
+    hits = 0
+    for _ in range(barrage_count):
+        res = roll_d10()
+        if res >= 9:
+            hits += 1
+    
+    for ship in enemy_fleet:
+        if isinstance(ship, Fighter):
+            enemy_fleet.remove(ship)
+            break
 
 
 def main():
@@ -132,6 +158,8 @@ def main():
         fleet_2 = deepcopy(_fleet_2)
         active_combat = True
         round_num = 1
+        antifighter_barrage(fleet_1, fleet_2)
+        antifighter_barrage(fleet_2, fleet_1)
         while active_combat:
             fleet_1_hits = roll_fleet_hits(fleet_1)
             fleet_2_hits = roll_fleet_hits(fleet_2)
