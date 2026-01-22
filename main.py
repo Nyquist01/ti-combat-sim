@@ -137,10 +137,11 @@ def antifighter_barrage(fleet: list[Ship], enemy_fleet: list[Ship]) -> int:
         if res >= 9:
             hits += 1
     
-    for ship in enemy_fleet:
-        if isinstance(ship, Fighter):
-            enemy_fleet.remove(ship)
-            break
+    for _ in range(hits):
+        for ship in enemy_fleet:
+            if isinstance(ship, Fighter):
+                enemy_fleet.remove(ship)
+                break
 
 
 def main():
