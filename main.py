@@ -95,9 +95,10 @@ def roll_fleet_hits(fleet: list[Ship]) -> int:
     """Returns the number of hits a fleet produced"""
     hits = 0
     for ship in fleet:
-        res = roll_d10()
-        if res >= ship.combat:
-            hits += 1
+        for _ in ship.rolls:
+            res = roll_d10()
+            if res >= ship.combat:
+                hits += 1
     return hits
 
 
