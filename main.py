@@ -1,9 +1,9 @@
 """
 Calculate the outcome of this space combat:
 
-2 dreadnaughts vs 1 dreadnaught + 1 carrier + 4 fighters
+2 dreadnoughts vs 1 dreadnought + 1 carrier + 4 fighters
 
-Dreadnaught:
+Dreadnought:
 2 HP
 5 Combat roll (60% chance of producing a hit)
 
@@ -42,13 +42,13 @@ class Ship(ABC):
         return f"<name={self.name} hp={self.hp}>"
 
 
-class Dreadnaught(Ship):
+class Dreadnought(Ship):
     def __init__(self):
         self.hp = 2
         self.combat = 5
         self.rolls = 1
         self.priority = 1
-        self.name = "dreadnaught"
+        self.name = "dreadnought"
 
 
 class Fighter(Ship):
@@ -107,7 +107,7 @@ def assign_fleet_hits(hits: int, target_fleet: list[Ship]):
     Assigns hits to the target fleet.
 
     Assume hit strategy where we want to keep our 'best' ships alive
-    for as long as possible (i.e. dreadnaughts) - this is determined
+    for as long as possible (i.e. dreadnoughts) - this is determined
     using a ship's priority.
     """
     for _ in range(hits):
@@ -124,13 +124,13 @@ def build_fleets(fleet_num: int | str) -> list[Ship]:
     print(f"\n--- Building fleet {fleet_num} ---")
     n_fighters = int(input("Fighters: "))
     n_carriers = int(input("Carriers: "))
-    n_dreadnaughts = int(input("Dreadnaughts: "))
+    n_dreadnoughts = int(input("Dreadnoughts: "))
     n_destroyers = int(input("Destroyers: "))
     n_warsuns = int(input("Warsuns: "))
     return (
         [Fighter() for _ in range(n_fighters)]
         + [Carrier() for _ in range(n_carriers)]
-        + [Dreadnaught() for _ in range(n_dreadnaughts)]
+        + [Dreadnought() for _ in range(n_dreadnoughts)]
         + [Destroyer() for _ in range(n_destroyers)]
         + [Warsun() for _ in range(n_warsuns)]
     )
