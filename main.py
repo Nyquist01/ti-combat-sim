@@ -25,6 +25,7 @@ Carrier:
 from copy import deepcopy
 from abc import ABC
 import random
+from tabulate import tabulate
 
 
 class Ship(ABC):
@@ -104,6 +105,18 @@ def build_fleets(fleet_num: int | str) -> list[Ship]:
     return [Fighter() for _ in range(n_fighters)] + [Carrier() for _ in range(n_carriers)] + [Dreadnaught() for _ in range(n_dreadnaughts)]
 
 
+def build_table(fleet_1_wins: int, fleet_2_wins: int, draws: int, simulations: int) -> None:
+    headers = ["Fleet", "Wins", "% Winrate"]
+    data = [
+        ["Fleet 1", fleet_1_wins, round((fleet_1_wins/simulations) * 100)],
+        ["Fleet 2", fleet_2_wins, round((fleet_2_wins/simulations) * 100)],
+        ["Draws", draws, round((draws/simulations) * 100)]
+    ]
+    print("\n")
+    print(tabulate(data, headers=headers, tablefmt="grid"))
+
+
+
 def main():
     """Classic Monte Carlo simulation"""
     simulations = 10000
@@ -137,9 +150,7 @@ def main():
             round_num += 1
         rounds += round_num
     
-    print(f"Fleet 1 won {fleet_1_wins} times ({round((fleet_1_wins/simulations) * 100)}%)")
-    print(f"Fleet 2 won {fleet_2_wins} times ({round((fleet_2_wins/simulations) * 100)}%)")
-    print(f"Draws={draws} ({round((draws/simulations) * 100)})% with avg number of rounds={round(rounds/simulations)}")
+    build_table(fleet_1_wins, fleet_2_wins, draws, simulations)
 
 
 if __name__ == "__main__":
