@@ -34,6 +34,7 @@ class Ship(ABC):
     priority: int
     name: str
     rolls: int  # number of die this ship rolls in one combat turn
+    has_antifighter_barrage: bool = False
 
     def take_damage(self):
         self.hp -= 1
@@ -76,6 +77,7 @@ class Destroyer(Ship):
         self.rolls = 1
         self.priority = 2
         self.name = "destroyer"
+        self.has_antifighter_barrage = True
 
 
 class Warsun(Ship):
@@ -152,7 +154,7 @@ def build_table(
 def antifighter_barrage(fleet: list[Ship], enemy_fleet: list[Ship]) -> int:
     barrage_count = 0
     for ship in fleet:
-        if isinstance(ship, Destroyer):
+        if ship.has_antifighter_barrage:
             barrage_count += 1
 
     hits = 0
