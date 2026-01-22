@@ -15,7 +15,6 @@ Carrier:
 1 HP
 9 Combat roll (80% chance of producing a hit)
 
-Pseudo:
 
 1. First player rolls for each of their ships - count the number of hits produced
 2. Second player rolls for each of their ships - count the number of hits produced
@@ -101,11 +100,13 @@ def main():
     fleet_1_wins = 0
     fleet_2_wins = 0
     draws = 0
+    rounds = 0
 
     for _ in range(simulations):
         fleet_1: list[Ship] = [Dreadnaught(), Dreadnaught()]
         fleet_2: list[Ship] = [Dreadnaught(), Fighter(), Fighter(), Fighter(), Fighter(), Carrier()]
         active_combat = True
+        round_num = 1
         while active_combat:
             fleet_1_hits = roll_fleet_hits(fleet_1)
             fleet_2_hits = roll_fleet_hits(fleet_2)
@@ -122,10 +123,12 @@ def main():
             elif len(fleet_2) == 0:
                 fleet_1_wins += 1
                 active_combat = False
+            round_num += 1
+        rounds += round_num
     
     print(f"Fleet 1 won {fleet_1_wins} times ({round((fleet_1_wins/simulations) * 100)}%)")
     print(f"Fleet 2 won {fleet_2_wins} times ({round((fleet_2_wins/simulations) * 100)}%)")
-    print(f"Draws={draws} ({round((draws/simulations) * 100)})%")
+    print(f"Draws={draws} ({round((draws/simulations) * 100)})% with avg number of rounds={round(rounds/simulations)}")
 
 
 if __name__ == "__main__":
