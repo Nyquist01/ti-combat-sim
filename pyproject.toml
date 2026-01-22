@@ -1,0 +1,12 @@
+[project]
+name = "ti4-monte-carlo"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13.1"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]
