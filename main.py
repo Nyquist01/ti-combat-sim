@@ -151,7 +151,7 @@ def build_table(
     print(tabulate(data, headers=headers, tablefmt="grid"))
 
 
-def antifighter_barrage(fleet: list[Ship], enemy_fleet: list[Ship]) -> int:
+def antifighter_barrage(fleet: list[Ship], enemy_fleet: list[Ship]) -> None:
     barrage_count = 0
     for ship in fleet:
         if ship.has_antifighter_barrage:
