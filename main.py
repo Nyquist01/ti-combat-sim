@@ -166,6 +166,7 @@ def antifighter_barrage(fleet: list[Ship], enemy_fleet: list[Ship]) -> int:
             if isinstance(ship, Fighter):
                 enemy_fleet.remove(ship)
                 break
+        return # no fighters in enemy fleet so return early
 
 
 def main():
