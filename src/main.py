@@ -40,8 +40,8 @@ class Ship(ABC):
 
 
 class Dreadnaught(Ship):
-    def __init__(self):
-        self.hp = 2
+    def __init__(self, hp: int = 2):
+        self.hp = hp
         self.combat = 5
         self.priority = 1
         self.name = "dreadnaught"
@@ -77,6 +77,10 @@ def roll_fleet_hits(fleet: list[Ship]) -> int:
     return hits
 
 
+def sort_fleet(fleet: list[Ship]):
+    fleet.sort(key=lambda ship: (-ship.priority, -ship.hp))
+
+
 def assign_fleet_hits(hits: int, target_fleet: list[Ship]):
     """
     Assigns hits to the target fleet.
@@ -88,7 +92,7 @@ def assign_fleet_hits(hits: int, target_fleet: list[Ship]):
     for _ in range(hits):
         if len(target_fleet) == 0:
             break
-        target_fleet.sort(key=lambda ship: (-ship.priority, -ship.hp))
+        sort_fleet(target_fleet)
         ship_to_hit = target_fleet[0]
         ship_to_hit.take_damage()
         if ship_to_hit.hp <= 0:
