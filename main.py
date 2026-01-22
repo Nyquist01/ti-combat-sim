@@ -33,10 +33,11 @@ class Ship(ABC):
     combat: int
     priority: int
     name: str
-    
+    rolls: int  # number of die this ship rolls in one combat turn
+
     def take_damage(self):
         self.hp -= 1
-        
+
     def __repr__(self):
         return f"<name={self.name} hp={self.hp}>"
 
@@ -45,6 +46,7 @@ class Dreadnaught(Ship):
     def __init__(self):
         self.hp = 2
         self.combat = 5
+        self.rolls = 1
         self.priority = 1
         self.name = "dreadnaught"
 
@@ -53,6 +55,7 @@ class Fighter(Ship):
     def __init__(self):
         self.hp = 1
         self.combat = 9
+        self.rolls = 1
         self.priority = 3
         self.name = "fighter"
 
@@ -61,6 +64,7 @@ class Carrier(Ship):
     def __init__(self):
         self.hp = 1
         self.combat = 9
+        self.rolls = 1
         self.priority = 4
         self.name = "carrier"
 
@@ -69,8 +73,18 @@ class Destroyer(Ship):
     def __init__(self):
         self.hp = 1
         self.combat = 1
+        self.rolls = 1
         self.priority = 2
         self.name = "destroyer"
+
+
+class Warsun(Ship):
+    def __init__(self):
+        self.hp = 2
+        self.combat = 3
+        self.rolls = 3
+        self.priority = 1
+        self.name = "warsun"
 
 
 def roll_d10() -> int:
@@ -90,7 +104,7 @@ def roll_fleet_hits(fleet: list[Ship]) -> int:
 def assign_fleet_hits(hits: int, target_fleet: list[Ship]):
     """
     Assigns hits to the target fleet.
-    
+
     Assume hit strategy where we want to keep our 'best' ships alive
     for as long as possible (i.e. dreadnaughts) - this is determined
     using a ship's priority.
@@ -111,15 +125,24 @@ def build_fleets(fleet_num: int | str) -> list[Ship]:
     n_carriers = int(input("Carriers: "))
     n_dreadnaughts = int(input("Dreadnaughts: "))
     n_destroyers = int(input("Destroyers: "))
-    return [Fighter() for _ in range(n_fighters)] + [Carrier() for _ in range(n_carriers)] + [Dreadnaught() for _ in range(n_dreadnaughts)] + [Destroyer() for _ in range(n_destroyers)]
+    n_warsuns = int(input("Warsuns: "))
+    return (
+        [Fighter() for _ in range(n_fighters)]
+        + [Carrier() for _ in range(n_carriers)]
+        + [Dreadnaught() for _ in range(n_dreadnaughts)]
+        + [Destroyer() for _ in range(n_destroyers)]
+        + [Warsun() for _ in range(n_warsuns)]
+    )
 
 
-def build_table(fleet_1_wins: int, fleet_2_wins: int, draws: int, simulations: int) -> None:
+def build_table(
+    fleet_1_wins: int, fleet_2_wins: int, draws: int, simulations: int
+) -> None:
     headers = ["Fleet", "Wins", "% Winrate"]
     data = [
-        ["Fleet 1", fleet_1_wins, round((fleet_1_wins/simulations) * 100)],
-        ["Fleet 2", fleet_2_wins, round((fleet_2_wins/simulations) * 100)],
-        ["Draws", draws, round((draws/simulations) * 100)]
+        ["Fleet 1", fleet_1_wins, round((fleet_1_wins / simulations) * 100)],
+        ["Fleet 2", fleet_2_wins, round((fleet_2_wins / simulations) * 100)],
+        ["Draws", draws, round((draws / simulations) * 100)],
     ]
     print("\n")
     print(tabulate(data, headers=headers, tablefmt="grid"))
@@ -130,13 +153,13 @@ def antifighter_barrage(fleet: list[Ship], enemy_fleet: list[Ship]) -> int:
     for ship in fleet:
         if isinstance(ship, Destroyer):
             barrage_count += 1
-    
+
     hits = 0
     for _ in range(barrage_count):
         res = roll_d10()
         if res >= 9:
             hits += 1
-    
+
     for _ in range(hits):
         for ship in enemy_fleet:
             if isinstance(ship, Fighter):
@@ -166,7 +189,7 @@ def main():
             fleet_2_hits = roll_fleet_hits(fleet_2)
             assign_fleet_hits(fleet_1_hits, fleet_2)
             assign_fleet_hits(fleet_2_hits, fleet_1)
-            
+
             if len(fleet_1) == 0 and len(fleet_2) == 0:
                 draws += 1
                 active_combat = False
@@ -178,7 +201,7 @@ def main():
                 active_combat = False
             round_num += 1
         rounds += round_num
-    
+
     build_table(fleet_1_wins, fleet_2_wins, draws, simulations)
 
 
