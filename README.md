@@ -4,6 +4,8 @@ A Monte Carlo simulation to estimate the outcomes of space battles in Twilight I
 
 This simulator allows you to model fleets of ships with different stats (hit points, combat rolls, priority) and see which fleet is most likely to win over many simulated battles.
 
+![](images/cli.png)
+
 # Usage
 
 Install dependencies:
