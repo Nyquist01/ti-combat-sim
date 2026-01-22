@@ -37,7 +37,7 @@ class Ship(ABC):
         
     def __repr__(self):
         return f"<name={self.name} hp={self.hp}>"
-        
+
 
 class Dreadnaught(Ship):
     def __init__(self):
@@ -82,7 +82,8 @@ def assign_fleet_hits(hits: int, target_fleet: list[Ship]):
     Assigns hits to the target fleet.
     
     Assume hit strategy where we want to keep our 'best' ships alive
-    for as long as possible (i.e. dreadnaughts).
+    for as long as possible (i.e. dreadnaughts) - this is determined
+    using a ship's priority.
     """
     for _ in range(hits):
         if len(target_fleet) == 0:
