@@ -22,6 +22,7 @@ Carrier:
 4. Second player assigns hits
 """
 
+from copy import deepcopy
 from abc import ABC
 import random
 
@@ -88,11 +89,19 @@ def assign_fleet_hits(hits: int, target_fleet: list[Ship]):
     for _ in range(hits):
         if len(target_fleet) == 0:
             break
-        target_fleet.sort(key=lambda ship: (-ship.priority, -ship.hp))
+        target_fleet.sort(key=lambda ship: (-ship.hp, -ship.priority))
         ship_to_hit = target_fleet[0]
         ship_to_hit.take_damage()
         if ship_to_hit.hp <= 0:
-            target_fleet.pop(0)
+            target_fleet.remove(ship_to_hit)
+
+
+def build_fleets(fleet_num: int | str) -> list[Ship]:
+    print(f"\n--- Building fleet {fleet_num} ---")
+    n_fighters = int(input("Fighters: "))
+    n_carriers = int(input("Carriers: "))
+    n_dreadnaughts = int(input("Dreadnaughts: "))
+    return [Fighter() for _ in range(n_fighters)] + [Carrier() for _ in range(n_carriers)] + [Dreadnaught() for _ in range(n_dreadnaughts)]
 
 
 def main():
@@ -102,10 +111,12 @@ def main():
     fleet_2_wins = 0
     draws = 0
     rounds = 0
+    _fleet_1: list[Ship] = build_fleets(1)
+    _fleet_2: list[Ship] = build_fleets(2)
 
     for _ in range(simulations):
-        fleet_1: list[Ship] = [Dreadnaught(), Dreadnaught()]
-        fleet_2: list[Ship] = [Dreadnaught(), Fighter(), Fighter(), Fighter(), Fighter(), Carrier()]
+        fleet_1 = deepcopy(_fleet_1)
+        fleet_2 = deepcopy(_fleet_2)
         active_combat = True
         round_num = 1
         while active_combat:
@@ -115,7 +126,6 @@ def main():
             assign_fleet_hits(fleet_2_hits, fleet_1)
             
             if len(fleet_1) == 0 and len(fleet_2) == 0:
-                print("Both fleets destroyed in the same round! DRAW")
                 draws += 1
                 active_combat = False
             elif len(fleet_1) == 0:
