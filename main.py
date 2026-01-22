@@ -9,11 +9,11 @@ Dreadnaught:
 
 Fighter:
 1 HP
-9 Combat roll (80% chance of producing a hit)
+9 Combat roll (20% chance of producing a hit)
 
 Carrier:
 1 HP
-9 Combat roll (80% chance of producing a hit)
+9 Combat roll (20% chance of producing a hit)
 
 
 1. First player rolls for each of their ships - count the number of hits produced
@@ -45,7 +45,7 @@ class Dreadnaught(Ship):
         self.combat = 5
         self.priority = 1
         self.name = "dreadnaught"
-        
+
 
 class Fighter(Ship):
     def __init__(self):
