@@ -6,6 +6,14 @@ This simulator allows you to model fleets of ships with different stats (hit poi
 
 # Usage
 
+Install dependencies:
+
+```
+pip install -r requirements.txt
+```
+
+Run script:
+
 ```
 python main.py
 ```
