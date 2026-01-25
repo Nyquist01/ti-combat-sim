@@ -28,21 +28,8 @@ from copy import deepcopy
 from tabulate import tabulate
 
 from .ships import Carrier, Destroyer, Dreadnought, Fighter, Ship, Warsun
-
-
-def roll_d10() -> int:
-    return random.randint(1, 10)
-
-
-def roll_fleet_hits(fleet: list[Ship]) -> int:
-    """Returns the number of hits a fleet produced"""
-    hits = 0
-    for ship in fleet:
-        for _ in range(ship.rolls):
-            res = roll_d10()
-            if res >= ship.combat:
-                hits += 1
-    return hits
+from .fleet import Fleet
+from .rng import roll_d10
 
 
 def assign_fleet_hits(hits: int, target_fleet: list[Ship]):
@@ -96,20 +83,13 @@ def build_fleet(fleet_num: int | str) -> list[Ship]:
     return fleet
 
 
-def get_fleet_cost(fleet: list[Ship]) -> int:
-    total = 0
-    for ship in fleet:
-        total += ship.cost
-    return total
-
-
 def build_table(
-    fleet_1_wins: int, fleet_2_wins: int, draws: int, simulations: int, fleet_1_cost: int, fleet_2_cost: int
+    fleet_1_wins: int, fleet_2_wins: int, draws: int, simulations: int, fleet_1_cost: int, fleet_2_cost: int, fleet_1_hp: int, fleet_2_hp: int
 ) -> None:
-    headers = ["Fleet", "Wins", "% Winrate", "Cost"]
+    headers = ["Fleet", "Wins", "% Winrate", "Cost", "Effective HP"]
     data = [
-        ["Fleet 1", fleet_1_wins, round((fleet_1_wins / simulations) * 100), fleet_1_cost],
-        ["Fleet 2", fleet_2_wins, round((fleet_2_wins / simulations) * 100), fleet_2_cost],
+        ["Fleet 1", fleet_1_wins, round((fleet_1_wins / simulations) * 100), fleet_1_cost, fleet_1_hp],
+        ["Fleet 2", fleet_2_wins, round((fleet_2_wins / simulations) * 100), fleet_2_cost, fleet_2_hp],
         ["Draws", draws, round((draws / simulations) * 100), "-"],
     ]
     print("\n")
@@ -143,34 +123,34 @@ def run_simulation():
     fleet_2_wins = 0
     draws = 0
     rounds = 0
-    _fleet_1: list[Ship] = build_fleet(1)
-    fleet_1_cost = get_fleet_cost(_fleet_1)
-    _fleet_2: list[Ship] = build_fleet(2)
-    fleet_2_cost = get_fleet_cost(_fleet_2)
+    fleet_1_name = "Fleet 1"
+    fleet_2_name = "Fleet 2"
+    _fleet_1 = Fleet(fleet_1_name, build_fleet(fleet_1_name))
+    _fleet_2 = Fleet(fleet_2_name, build_fleet(fleet_2_name))
 
     for _ in range(simulations):
         fleet_1 = deepcopy(_fleet_1)
         fleet_2 = deepcopy(_fleet_2)
         active_combat = True
         round_num = 1
-        antifighter_barrage(fleet_1, fleet_2)
-        antifighter_barrage(fleet_2, fleet_1)
+        antifighter_barrage(fleet_1.ships, fleet_2.ships)
+        antifighter_barrage(fleet_2.ships, fleet_1.ships)
         while active_combat:
-            fleet_1_hits = roll_fleet_hits(fleet_1)
-            fleet_2_hits = roll_fleet_hits(fleet_2)
-            assign_fleet_hits(fleet_1_hits, fleet_2)
-            assign_fleet_hits(fleet_2_hits, fleet_1)
+            fleet_1_hits = fleet_1.roll_hits()
+            fleet_2_hits = fleet_2.roll_hits()
+            assign_fleet_hits(fleet_1_hits, fleet_2.ships)
+            assign_fleet_hits(fleet_2_hits, fleet_1.ships)
 
-            if len(fleet_1) == 0 and len(fleet_2) == 0:
+            if fleet_1.is_dead and fleet_2.is_dead:
                 draws += 1
                 active_combat = False
-            elif len(fleet_1) == 0:
+            elif fleet_1.is_dead:
                 fleet_2_wins += 1
                 active_combat = False
-            elif len(fleet_2) == 0:
+            elif fleet_2.is_dead:
                 fleet_1_wins += 1
                 active_combat = False
             round_num += 1
         rounds += round_num
 
-    build_table(fleet_1_wins, fleet_2_wins, draws, simulations, fleet_1_cost, fleet_2_cost)
+    build_table(fleet_1_wins, fleet_2_wins, draws, simulations, _fleet_1.cost, _fleet_2.cost, _fleet_1.hp, _fleet_2.hp)
