@@ -63,20 +63,37 @@ def assign_fleet_hits(hits: int, target_fleet: list[Ship]):
             target_fleet.remove(ship_to_hit)
 
 
-def build_fleets(fleet_num: int | str) -> list[Ship]:
+def prompt_int(label: str) -> int:
+    min_value = 0
+    while True:
+        try:
+            value = int(input(f"{label}: "))
+            if value < min_value:
+                print(f"Please enter a greater than {min_value}.")
+                continue
+            return value
+        except ValueError:
+            print("Please enter a valid integer.")
+        except KeyboardInterrupt:
+            print("Input cancelled. Please try again.")
+
+
+def build_fleet(fleet_num: int | str) -> list[Ship]:
+    fleet = []
     print(f"\n--- Building fleet {fleet_num} ---")
-    n_fighters = int(input("Fighters: "))
-    n_carriers = int(input("Carriers: "))
-    n_dreadnoughts = int(input("Dreadnoughts: "))
-    n_destroyers = int(input("Destroyers: "))
-    n_warsuns = int(input("Warsuns: "))
-    return (
-        [Fighter() for _ in range(n_fighters)]
-        + [Carrier() for _ in range(n_carriers)]
-        + [Dreadnought() for _ in range(n_dreadnoughts)]
-        + [Destroyer() for _ in range(n_destroyers)]
-        + [Warsun() for _ in range(n_warsuns)]
-    )
+    ship_types = {
+        "Fighter": Fighter,
+        "Carrier": Carrier,
+        "Dreadnoughts": Dreadnought,
+        "Destroyers": Destroyer,
+        "Waruns": Warsun
+    }
+
+    for ship_type, cls in ship_types.items():
+        n_ships = prompt_int(ship_type)
+        fleet += [cls() for _ in range(n_ships)]
+    
+    return fleet
 
 
 def build_table(
@@ -119,8 +136,8 @@ def run_simulation():
     fleet_2_wins = 0
     draws = 0
     rounds = 0
-    _fleet_1: list[Ship] = build_fleets(1)
-    _fleet_2: list[Ship] = build_fleets(2)
+    _fleet_1: list[Ship] = build_fleet(1)
+    _fleet_2: list[Ship] = build_fleet(2)
 
     for _ in range(simulations):
         fleet_1 = deepcopy(_fleet_1)
