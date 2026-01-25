@@ -2,12 +2,13 @@ from abc import ABC
 
 
 class Ship(ABC):
-    hp: int
-    combat: int
-    priority: int
-    name: str
-    rolls: int  # number of die this ship rolls in one combat turn
-    has_antifighter_barrage: bool = False
+    def __init__(self, hp: int, combat: int, rolls: int, priority: int, name: str, has_antifighter_barrage: bool = False):
+        self.hp = hp
+        self.combat = combat
+        self.rolls = rolls
+        self.priority = priority
+        self.name = name
+        self.has_antifighter_barrage = has_antifighter_barrage
 
     def take_damage(self):
         self.hp -= 1
@@ -18,45 +19,55 @@ class Ship(ABC):
 
 class Dreadnought(Ship):
     def __init__(self):
-        self.hp = 2
-        self.combat = 5
-        self.rolls = 1
-        self.priority = 1
-        self.name = "dreadnought"
+        super().__init__(
+            name="dreadnought",
+            hp=2,
+            combat=5,
+            rolls=1,
+            priority=2,
+        )
 
 
 class Fighter(Ship):
     def __init__(self):
-        self.hp = 1
-        self.combat = 9
-        self.rolls = 1
-        self.priority = 3
-        self.name = "fighter"
+        super().__init__(
+            name="fighter",
+            hp=1,
+            combat=9,
+            rolls=1,
+            priority=4,
+        )
 
 
 class Carrier(Ship):
     def __init__(self):
-        self.hp = 1
-        self.combat = 9
-        self.rolls = 1
-        self.priority = 4
-        self.name = "carrier"
+        super().__init__(
+            name="carrier",
+            hp=1,
+            combat=9,
+            rolls=1,
+            priority=5,
+        )
 
 
 class Destroyer(Ship):
     def __init__(self):
-        self.hp = 1
-        self.combat = 1
-        self.rolls = 1
-        self.priority = 2
-        self.name = "destroyer"
-        self.has_antifighter_barrage = True
+        super().__init__(
+            name="destroyer",
+            hp=1,
+            combat=1,
+            rolls=1,
+            priority=3,
+            has_antifighter_barrage=True
+        )
 
 
 class Warsun(Ship):
     def __init__(self):
-        self.hp = 2
-        self.combat = 3
-        self.rolls = 3
-        self.priority = 1
-        self.name = "warsun"
+        super().__init__(
+            name="warsun",
+            hp=2,
+            combat=3,
+            rolls=3,
+            priority=1,
+        )
