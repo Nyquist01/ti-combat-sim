@@ -22,14 +22,13 @@ Carrier:
 4. Second player assigns hits
 """
 
-import random
 from copy import deepcopy
 
 from tabulate import tabulate
 
-from .ships import Carrier, Destroyer, Dreadnought, Fighter, Ship, Warsun
 from .fleet import Fleet
 from .rng import roll_d10
+from .ships import Carrier, Destroyer, Dreadnought, Fighter, Ship, Warsun
 
 
 def assign_fleet_hits(hits: int, target_fleet: list[Ship]):
@@ -73,23 +72,42 @@ def build_fleet(fleet_num: int | str) -> list[Ship]:
         "Carrier": Carrier,
         "Dreadnoughts": Dreadnought,
         "Destroyers": Destroyer,
-        "Waruns": Warsun
+        "Waruns": Warsun,
     }
 
     for ship_type, cls in ship_types.items():
         n_ships = prompt_int(ship_type)
         fleet += [cls() for _ in range(n_ships)]
-    
+
     return fleet
 
 
 def build_table(
-    fleet_1_wins: int, fleet_2_wins: int, draws: int, simulations: int, fleet_1_cost: int, fleet_2_cost: int, fleet_1_hp: int, fleet_2_hp: int
+    fleet_1_wins: int,
+    fleet_2_wins: int,
+    draws: int,
+    simulations: int,
+    fleet_1_cost: int,
+    fleet_2_cost: int,
+    fleet_1_hp: int,
+    fleet_2_hp: int,
 ) -> None:
     headers = ["Fleet", "Wins", "% Winrate", "Cost", "Effective HP"]
     data = [
-        ["Fleet 1", fleet_1_wins, round((fleet_1_wins / simulations) * 100), fleet_1_cost, fleet_1_hp],
-        ["Fleet 2", fleet_2_wins, round((fleet_2_wins / simulations) * 100), fleet_2_cost, fleet_2_hp],
+        [
+            "Fleet 1",
+            fleet_1_wins,
+            round((fleet_1_wins / simulations) * 100),
+            fleet_1_cost,
+            fleet_1_hp,
+        ],
+        [
+            "Fleet 2",
+            fleet_2_wins,
+            round((fleet_2_wins / simulations) * 100),
+            fleet_2_cost,
+            fleet_2_hp,
+        ],
         ["Draws", draws, round((draws / simulations) * 100), "-"],
     ]
     print("\n")
@@ -153,4 +171,13 @@ def run_simulation():
             round_num += 1
         rounds += round_num
 
-    build_table(fleet_1_wins, fleet_2_wins, draws, simulations, _fleet_1.cost, _fleet_2.cost, _fleet_1.hp, _fleet_2.hp)
+    build_table(
+        fleet_1_wins,
+        fleet_2_wins,
+        draws,
+        simulations,
+        _fleet_1.cost,
+        _fleet_2.cost,
+        _fleet_1.hp,
+        _fleet_2.hp,
+    )
