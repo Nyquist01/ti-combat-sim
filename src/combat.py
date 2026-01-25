@@ -96,14 +96,21 @@ def build_fleet(fleet_num: int | str) -> list[Ship]:
     return fleet
 
 
+def get_fleet_cost(fleet: list[Ship]) -> int:
+    total = 0
+    for ship in fleet:
+        total += ship.cost
+    return total
+
+
 def build_table(
-    fleet_1_wins: int, fleet_2_wins: int, draws: int, simulations: int
+    fleet_1_wins: int, fleet_2_wins: int, draws: int, simulations: int, fleet_1_cost: int, fleet_2_cost: int
 ) -> None:
-    headers = ["Fleet", "Wins", "% Winrate"]
+    headers = ["Fleet", "Wins", "% Winrate", "Cost"]
     data = [
-        ["Fleet 1", fleet_1_wins, round((fleet_1_wins / simulations) * 100)],
-        ["Fleet 2", fleet_2_wins, round((fleet_2_wins / simulations) * 100)],
-        ["Draws", draws, round((draws / simulations) * 100)],
+        ["Fleet 1", fleet_1_wins, round((fleet_1_wins / simulations) * 100), fleet_1_cost],
+        ["Fleet 2", fleet_2_wins, round((fleet_2_wins / simulations) * 100), fleet_2_cost],
+        ["Draws", draws, round((draws / simulations) * 100), "-"],
     ]
     print("\n")
     print(tabulate(data, headers=headers, tablefmt="grid"))
@@ -137,7 +144,9 @@ def run_simulation():
     draws = 0
     rounds = 0
     _fleet_1: list[Ship] = build_fleet(1)
+    fleet_1_cost = get_fleet_cost(_fleet_1)
     _fleet_2: list[Ship] = build_fleet(2)
+    fleet_2_cost = get_fleet_cost(_fleet_2)
 
     for _ in range(simulations):
         fleet_1 = deepcopy(_fleet_1)
@@ -164,4 +173,4 @@ def run_simulation():
             round_num += 1
         rounds += round_num
 
-    build_table(fleet_1_wins, fleet_2_wins, draws, simulations)
+    build_table(fleet_1_wins, fleet_2_wins, draws, simulations, fleet_1_cost, fleet_2_cost)
